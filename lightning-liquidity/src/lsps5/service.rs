@@ -579,6 +579,13 @@ where
 		self.send_notifications_to_client_webhooks(client_id, notification)
 	}
 
+	/// AN patch: returns whether the client has at least one registered webhook. Never exposes the webhook
+	/// addresses or app names.
+	pub fn has_webhooks(&self, client_id: PublicKey) -> bool {
+		let outer_state_lock = self.per_peer_state.read().unwrap();
+		outer_state_lock.get(&client_id).map_or(false, |peer_state| peer_state.webhooks_len() > 0)
+	}
+
 	/// Notify that the client has one or more pending BOLT Onion Messages.
 	///
 	/// SHOULD be called by your LSP application logic when you receive Onion Messages
