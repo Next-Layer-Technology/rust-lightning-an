@@ -324,6 +324,13 @@ fn webhook_registration_flow() {
 	let raw_webhook_url = "https://www.example.org/push?l=1234567890abcdefghijklmnopqrstuv&c=best";
 	let webhook_url = LSPS5WebhookUrl::from_string(raw_webhook_url.to_string()).unwrap();
 
+	// AN patch: before any registration the client has no webhook.
+	assert!(!service_node
+		.liquidity_manager
+		.lsps5_service_handler()
+		.unwrap()
+		.has_webhooks(client_node_id));
+
 	let request_id = client_handler
 		.set_webhook(service_node_id, raw_app_name.to_string(), raw_webhook_url.to_string())
 		.expect("Failed to send set_webhook request");
@@ -360,6 +367,12 @@ fn webhook_registration_flow() {
 		_ => panic!("Expected SendWebhookNotification event"),
 	}
 	let set_webhook_response = get_lsps_message!(service_node, client_node_id);
+	// AN patch: after the registration the service reports a webhook (a yes or no, never the address).
+	assert!(service_node
+		.liquidity_manager
+		.lsps5_service_handler()
+		.unwrap()
+		.has_webhooks(client_node_id));
 
 	client_node
 		.liquidity_manager
