@@ -1084,7 +1084,7 @@ impl NegotiationContext {
 					return Err(AbortReason::UnexpectedFundingInput);
 				}
 
-				// AN TEST FIX: use the nSequence the peer sent for the shared input (Core Lightning sends 0), not our
+				// AN fix: use the nSequence the peer sent for the shared input (Core Lightning sends 0), not our
 				// own copy, so both sides build the same transaction. 0xFFFFFFFE and 0xFFFFFFFF are refused above.
 				let mut shared = shared_funding_input.clone();
 				shared.input.sequence = Sequence(msg.sequence);
